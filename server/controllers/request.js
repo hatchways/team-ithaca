@@ -98,32 +98,32 @@ exports.updateRequest = (req, res) => {
 // @making a payment request
 exports.paymentRequest = asyncHandler(async (req, res, next) => {
   const requestData = req.body;
-  const requestId = req.params.id;
+  // const requestId = req.params.id;
 
   // validate id
-  if (!ObjectId.isValid(requestId)) {
-    return res.status(400).send(Error("Request ID is invalid."));
-  }
+  // if (!ObjectId.isValid(requestId)) {
+  //   return res.status(400).send(Error("Request ID is invalid."));
+  // }
 
-  try {
-    const request = await Request.findById(requestId);
-    if (!request) {
-      res.status(400);
-      throw new Error("Could not find request");
-    }
-    if (requestData.paymentMethod_id) {
-      const paymentIntent = await stripe.paymentIntents.create({
-        payment_method: requestData.paymentMethod_id,
-        amount: requestData.totalAmount * 100,
-        currency: "cad",
-        confirmation_method: "manual",
-        confirm: true,
-      });
-    }
-
+  // const request = await Request.findById(requestId);
+  // if (!request) {
+  //   res.status(400);
+  //   throw new Error("Could not find request");
+  // }
+  if (requestData.paymentMethod_id) {
+    console.log("processing payment");
+    const paymentIntent = await stripe.paymentIntents.create({
+      payment_method: requestData.paymentMethod_id,
+      amount: requestData.totalAmount * 100,
+      currency: "cad",
+      confirmation_method: "manual",
+      confirm: true,
+    });
+    console.log(paymentIntent);
     if (paymentIntent.status === "succeeded") {
-      request.paid = true;
-      await request.save();
+      console.log("payment status is succeeded");
+      // request.paid = true;
+      // await request.save();
       res.json({
         success: true,
       });
@@ -134,7 +134,5 @@ exports.paymentRequest = asyncHandler(async (req, res, next) => {
           paymentIntent.status
       );
     }
-  } catch (e) {
-    return res.status(500).send(Error(e.message));
   }
 });

@@ -1,28 +1,20 @@
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
-import clsx from 'clsx';
 import useStyles from './useStyles';
-import {
-  Grid,
-  Typography,
-  FormControl,
-  RadioGroup,
-  FormControlLabel,
-  FormLabel,
-  Radio,
-  RadioProps,
-  TextField,
-} from '@material-ui/core';
+import { Grid, Typography, TextField, Button, CircularProgress } from '@material-ui/core';
 import { FormEvent, useState } from 'react';
 import { useSnackBar } from '../../context/useSnackbarContext';
 import { PaymentMethod } from '@stripe/stripe-js';
-import axios from 'axios';
 
 interface Props {
-  requestId: string;
   totalAmount: number;
 }
 
-export default function PaymentForm({ requestId, totalAmount }: Props): JSX.Element {
+type res = {
+  error?: { message: string };
+  success?: boolean;
+};
+
+export default function PaymentForm({ totalAmount }: Props): JSX.Element {
   const [processing, setProcessing] = useState<boolean>(false);
   const [billingDetails, setBillingDetails] = useState<{ name: string }>({
     name: '',
@@ -55,19 +47,6 @@ export default function PaymentForm({ requestId, totalAmount }: Props): JSX.Elem
     },
   };
 
-  function StyledRadio(props: RadioProps) {
-    return (
-      <Radio
-        className={classes.root}
-        disableRipple
-        color="default"
-        checkedIcon={<span className={clsx(classes.icon, classes.checkedIcon)} />}
-        icon={<span className={classes.icon} />}
-        {...props}
-      />
-    );
-  }
-
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!stripe || !elements) {
@@ -93,30 +72,52 @@ export default function PaymentForm({ requestId, totalAmount }: Props): JSX.Elem
   };
 
   const paymentAction = async (paymentMethod: PaymentMethod) => {
-    const res = await axios.post<any>(`/requests/${requestId}/pay`, {
-      totalAmount: totalAmount,
-      paymentMethod_id: paymentMethod.id,
+    console.log(paymentMethod.id, totalAmount);
+    // const res = await fetch(`/request/${requestId}/pay`, {
+    const res = await fetch(`/request/pay`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ paymentMethod_id: paymentMethod.id, totalAmount }),
     });
-
+    const paymentRes = await res.json();
+    handleResponse(paymentRes);
   };
 
-  
+  const handleResponse = async (res: res) => {
+    console.log(res);
+    if (res.success) {
+      updateSnackBarMessage('Payment has been made, Thank you for booking.');
+      setBillingDetails({
+        name: '',
+      });
+      setTimeout(function () {
+        window.location.href = '/';
+      }, 2000);
+    } else {
+      if (res.error) {
+        updateSnackBarMessage(res.error.message);
+      }
+    }
+  };
 
   return (
     <Grid container className={classes.paymentRoot}>
-      <Typography variant="h4">Checkout</Typography>
+      <Typography variant="h3">Checkout</Typography>
       <Grid className={classes.paymentContainer}>
         <Grid item sm={6}>
-          <TextField
-            fullWidth
-            label="Card Holder"
-            value={billingDetails.name}
-            variant="outlined"
-            className={classes.input}
-            onChange={(e) => setBillingDetails({ ...billingDetails, name: e.target.value })}
-          />
           <form onSubmit={handleSubmit}>
+            <TextField
+              required
+              label="Card Holder"
+              value={billingDetails.name}
+              variant="outlined"
+              className={classes.input}
+              onChange={(e) => setBillingDetails({ ...billingDetails, name: e.target.value })}
+            />
             <CardElement options={CARD_OPTIONS} className={classes.cardElement} />
+            <Button type="submit" variant="contained" size="large" color="primary">
+              {processing ? <CircularProgress style={{ color: 'white' }} /> : 'Make a Payment'}
+            </Button>
           </form>
         </Grid>
       </Grid>

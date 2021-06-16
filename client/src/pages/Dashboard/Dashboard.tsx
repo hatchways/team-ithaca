@@ -32,11 +32,11 @@ export default function Dashboard(): JSX.Element {
     <Grid container component="main" className={`${classes.root} ${classes.dashboard}`}>
       <CssBaseline />
       <Grid item className={classes.drawerWrapper}>
+        <Button component={Link} to="/payment" variant="outlined" color="primary">
+          payment page
+        </Button>
         <ChatSideBanner loggedInUser={loggedInUser} />
       </Grid>
-      <Button component={Link} to="/payment" variant="outlined" color="inherit">
-        testing payment page botton
-      </Button>
     </Grid>
   );
 }
