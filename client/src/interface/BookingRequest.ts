@@ -1,9 +1,6 @@
 const mongoose = require('mongoose');
 
-const { Schema } = mongoose;
-const { ObjectId } = Schema;
-
-export interface Request {
+export interface BookingRequest {
   user_id: string;
   sitter_id: string;
   start_date: Date;
@@ -13,6 +10,6 @@ export interface Request {
   paid: boolean;
 }
 
-export default interface GetRequestApiData {
+export default interface GetBookingRequestApiData {
   requests: Request;
 }

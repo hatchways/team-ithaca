@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -7,10 +7,24 @@ import DateFnsUtils from '@date-io/date-fns';
 import useStyles from './useStyles';
 import Booking from './Booking';
 import { Typography } from '@material-ui/core';
+import BookingRequest from '../../interface/BookingRequest';
+import getBookingRequests from '../../helpers/APICalls/bookingRequests/getBookingRequests';
 
 export default function ManageBookings(): JSX.Element {
   const classes = useStyles();
   const [date, setDate] = useState<Date | null>(new Date());
+  const [bookingReqData, setBookingReqData] = useState<BookingRequest | null>(null);
+
+  const getRequests = () => {
+    getBookingRequests().then((data) => {
+      setBookingReqData(data);
+      console.log(data);
+    });
+  };
+
+  useEffect(() => {
+    getRequests();
+  }, []);
 
   return (
     <Grid container justify="center" spacing={10} className={classes.root}>
