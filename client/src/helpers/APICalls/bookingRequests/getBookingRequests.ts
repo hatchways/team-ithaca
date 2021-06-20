@@ -1,5 +1,5 @@
 import { FetchOptions } from '../../../context/interface/FetchOptions';
-import GetBookingRequestApiData from '../../../interface/BookingRequest';
+import { GetBookingRequestApiData } from '../../../interface/BookingRequest';
 
 export async function getBookingRequests(): Promise<GetBookingRequestApiData> {
   const fetchOptions: FetchOptions = {

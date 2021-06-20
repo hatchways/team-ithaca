@@ -1,15 +1,16 @@
 const mongoose = require('mongoose');
 
 export interface BookingRequest {
+  _id: string;
   user_id: string;
   sitter_id: string;
-  start_date: Date;
-  end_date: Date;
-  accepted: boolean;
-  declined: boolean;
-  paid: boolean;
+  start_date: any;
+  end_date: any;
+  accepted?: boolean;
+  declined?: boolean;
+  paid?: boolean;
 }
 
-export default interface GetBookingRequestApiData {
-  requests: Request;
+export interface GetBookingRequestApiData {
+  requests: BookingRequest[];
 }

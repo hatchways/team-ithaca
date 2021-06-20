@@ -46,6 +46,9 @@ const useStyles = makeStyles({
     alignSelf: 'center',
     marginRight: '2rem',
   },
+  noBookingDisplay: {
+    paddingLeft: '1rem',
+  },
   settingsIcon: {
     color: 'lightgrey',
   },
