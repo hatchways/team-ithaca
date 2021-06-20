@@ -69,7 +69,7 @@ exports.getOneProfile = asyncHandler(async (req, res, next) => {
     }
 
     try {
-        const user = await User.findById(userId).populate({ path: "profile" });
+        const user = await User.findById(userId).populate("profile");
         res.status(200).json(user.profile);
     } catch (e) {
         res.status(500);
