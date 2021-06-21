@@ -6,7 +6,7 @@ export async function getBookingRequests(): Promise<GetBookingRequestApiData> {
     method: 'GET',
     credentials: 'include',
   };
-  return await fetch(`/request`, fetchOptions)
+  return await fetch(`/request?sortBy=start_date`, fetchOptions)
     .then((res) => res.json())
     .catch(() => ({
       error: { message: 'Unable to connect to server. Please try again' },
