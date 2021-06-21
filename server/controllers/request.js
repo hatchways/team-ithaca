@@ -18,6 +18,13 @@ exports.getAllRequest = (req, res) => {
 
     Request.find({ sitter_id: req.user.id })
         .sort([[sortBy, "ascending"]])
+        .populate({
+            path: "user_id",
+            populate: {
+                path: "profile",
+                select: "firstName lastName profileImg",
+            },
+        })
         .exec((error, requests) => {
             if (error) {
                 return res.status(500).json({

@@ -9,6 +9,7 @@ import Booking from './Booking';
 import { Typography } from '@material-ui/core';
 import { BookingRequest, GetBookingRequestApiData } from '../../interface/BookingRequest';
 import getBookingRequests from '../../helpers/APICalls/bookingRequests/getBookingRequests';
+import getOneProfile from '../../helpers/APICalls/profiles/getOneProfile';
 import { Badge } from '@material-ui/core';
 
 export default function ManageBookings(): JSX.Element {
@@ -18,42 +19,49 @@ export default function ManageBookings(): JSX.Element {
   const [nextBookingRequest, setNextBookingRequest] = useState<BookingRequest | null>(null);
   const [pastBookingRequests, setPastBookingRequests] = useState<BookingRequest[] | null>(null);
   const [currentBookingRequests, setCurrentBookingRequests] = useState<BookingRequest[] | null>(null);
+  const [nextBookingDisplay, setNextBookingDisplay] = useState<any>(null);
+  const [currentBookingsDisplay, setCurrentBookingsDisplay] = useState<any>(null);
 
-  let nextBookingsDisplay;
-  let currentBookingsDisplay;
   let pastBookingsDisplay;
 
-  if (nextBookingRequest) {
-    //   API call to find user info based on id
-    nextBookingsDisplay = (
-      <Grid key={nextBookingRequest._id}>
-        <Booking
-          outlined
-          accepted={
-            !nextBookingRequest.accepted && !nextBookingRequest.declined ? undefined : nextBookingRequest.accepted
-          }
-          date={nextBookingRequest.start_date}
-        />
-      </Grid>
-    );
-  }
+  const updateNextBookingDisplay = async () => {
+    if (nextBookingRequest) {
+      const sitterProfile = await getOneProfile(nextBookingRequest.sitter_id);
+      setNextBookingDisplay(
+        <Grid key={nextBookingRequest._id}>
+          <Booking
+            outlined
+            accepted={
+              !nextBookingRequest.accepted && !nextBookingRequest.declined ? undefined : nextBookingRequest.accepted
+            }
+            name={`${sitterProfile.firstName} ${sitterProfile.lastName}`}
+            avatar={sitterProfile.profileImg}
+            date={nextBookingRequest.start_date}
+          />
+        </Grid>,
+      );
+    }
+  };
 
-  if (currentBookingRequests && currentBookingRequests.length > 0) {
-    //   API call to find user info based on id
-    currentBookingsDisplay = (
-      <>
-        {currentBookingRequests.map((booking) => (
-          <Grid key={booking._id}>
-            <Booking
-              outlined
-              accepted={!booking.accepted && !booking.declined ? undefined : booking.accepted}
-              date={booking.start_date}
-            />
-          </Grid>
-        ))}
-      </>
-    );
-  }
+  const updateCurrentBookingDisplay = () => {
+    if (currentBookingRequests && currentBookingRequests.length > 0) {
+      setCurrentBookingsDisplay(
+        <>
+          {currentBookingRequests.map((booking) => {
+            return (
+              <Grid key={booking._id}>
+                <Booking
+                  outlined
+                  accepted={!booking.accepted && !booking.declined ? undefined : booking.accepted}
+                  date={booking.start_date}
+                />
+              </Grid>
+            );
+          })}
+        </>,
+      );
+    }
+  };
 
   if (pastBookingRequests && pastBookingRequests.length > 0) {
     pastBookingsDisplay = (
@@ -80,24 +88,33 @@ export default function ManageBookings(): JSX.Element {
     const pastRequestsList: BookingRequest[] = [];
     const now = new Date().valueOf();
     // Sorts dates by first setting them to numbers with valueOf, for use with TypeScript
-    const requests = data.requests.sort((a, b) => b.start_date.valueOf() - a.start_date.valueOf());
-    requests.map((request) => {
-      const startDate = Date.parse(request.start_date);
-      if (startDate > now) {
-        currentRequestsList.push(request);
-      } else {
-        pastRequestsList.push(request);
-      }
-    });
-    setNextBookingRequest(currentRequestsList[0]);
-    setCurrentBookingRequests(currentRequestsList.slice(1));
-    setPastBookingRequests(pastRequestsList);
-    console.log(currentRequestsList);
+    if (data.requests) {
+      const requests = data.requests.sort((a, b) => b.start_date.valueOf() - a.start_date.valueOf());
+      requests.map((request) => {
+        const startDate = Date.parse(request.start_date);
+        if (startDate > now) {
+          currentRequestsList.push(request);
+        } else {
+          pastRequestsList.push(request);
+        }
+      });
+      setNextBookingRequest(currentRequestsList[0]);
+      setCurrentBookingRequests(currentRequestsList.slice(1));
+      setPastBookingRequests(pastRequestsList);
+    }
   };
 
   useEffect(() => {
     getRequests();
   }, []);
+
+  useEffect(() => {
+    updateNextBookingDisplay();
+  }, [nextBookingRequest]);
+
+  useEffect(() => {
+    updateCurrentBookingDisplay();
+  }, [currentBookingRequests]);
 
   return (
     <Grid container justify="center" spacing={10} className={classes.root}>
@@ -107,8 +124,8 @@ export default function ManageBookings(): JSX.Element {
             <Grid className={classes.cardHeader}>
               <Typography className={classes.bookingTitle}>Your next booking:</Typography>
             </Grid>
-            {nextBookingsDisplay ? (
-              nextBookingsDisplay
+            {nextBookingDisplay ? (
+              nextBookingDisplay
             ) : (
               <Typography className={classes.noBookingDisplay}>No upcoming bookings</Typography>
             )}

@@ -12,9 +12,9 @@ import DateSelectPopover from './DaySelectPopover';
 import ProfileCard from './ProfileCard';
 import Alert from './alert';
 import useStyles from './useStyles';
-import getProfiles from '../../helpers/APICalls/getProfiles';
-import searchProfilesByCity from '../../helpers/APICalls/searchProfilesByCity';
-import searchProfilesByDay from '../../helpers/APICalls/searchProfilesByDay';
+import getProfiles from '../../helpers/APICalls/profiles/getProfiles';
+import searchProfilesByCity from '../../helpers/APICalls/profiles/searchProfilesByCity';
+import searchProfilesByDay from '../../helpers/APICalls/profiles/searchProfilesByDay';
 
 import { User } from '../../interface/User';
 
