@@ -14,44 +14,25 @@ import { Badge } from '@material-ui/core';
 export default function ManageBookings(): JSX.Element {
   const classes = useStyles();
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
-  const [selectedDays, setSelectedDays] = useState([1, 2, 3, 4, 5]);
-  const [requestDates, setRequestDates] = useState<Date[]>();
+  const [requestDates, setRequestDates] = useState<(string | null)[]>();
   const [nextBookingRequest, setNextBookingRequest] = useState<BookingRequest>();
   const [pastBookingRequests, setPastBookingRequests] = useState<BookingRequest[]>();
   const [currentBookingRequests, setCurrentBookingRequests] = useState<BookingRequest[]>();
-  const [nextBookingDisplay, setNextBookingDisplay] = useState<any>();
-  const [currentBookingsDisplay, setCurrentBookingsDisplay] = useState<any>();
-  const [pastBookingsDisplay, setPastBookingsDisplay] = useState<any>();
+  const [nextBookingDisplay, setNextBookingDisplay] = useState<JSX.Element>();
+  const [currentBookingsDisplay, setCurrentBookingsDisplay] = useState<JSX.Element>();
+  const [pastBookingsDisplay, setPastBookingsDisplay] = useState<JSX.Element>();
 
-  const updateNextBookingDisplay = async () => {
-    if (nextBookingRequest) {
-      const profile = nextBookingRequest.user_id.profile;
-      setNextBookingDisplay(
-        <Grid key={nextBookingRequest._id}>
-          <Booking
-            outlined
-            accepted={
-              !nextBookingRequest.accepted && !nextBookingRequest.declined ? undefined : nextBookingRequest.accepted
-            }
-            name={`${profile && profile.firstName} ${profile && profile.lastName}`}
-            avatar={profile && profile.profileImg}
-            date={nextBookingRequest.start_date}
-          />
-        </Grid>,
-      );
-    }
-  };
-
-  const updateBookingDisplay = (requestName: any, time: any) => {
+  const updateBookingDisplay = (bookingRequestName: any, time: string) => {
     const methods: any = {
       next: setNextBookingDisplay,
       current: setCurrentBookingsDisplay,
       past: setPastBookingsDisplay,
     };
-    if (requestName && requestName.length >= 1) {
+    // if bookingRequestName is array, map the items
+    if (bookingRequestName && bookingRequestName.length >= 1) {
       methods[time](
         <>
-          {requestName.map((booking: any) => {
+          {bookingRequestName.map((booking: any) => {
             const profile = booking.user_id.profile;
             return (
               <Grid key={booking._id}>
@@ -67,6 +48,24 @@ export default function ManageBookings(): JSX.Element {
           })}
         </>,
       );
+      // if bookingRequestName is not an array, display the single item
+    } else if (bookingRequestName) {
+      const profile = bookingRequestName.user_id.profile;
+      methods[time](
+        <>
+          <Grid key={bookingRequestName._id}>
+            <Booking
+              outlined
+              accepted={
+                !bookingRequestName.accepted && !bookingRequestName.declined ? undefined : bookingRequestName.accepted
+              }
+              name={`${profile && profile.firstName} ${profile && profile.lastName}`}
+              avatar={profile && profile.profileImg}
+              date={bookingRequestName.start_date}
+            />
+          </Grid>
+        </>,
+      );
     }
   };
 
@@ -74,16 +73,15 @@ export default function ManageBookings(): JSX.Element {
     const data = await getBookingRequests();
     const currentRequestsList: BookingRequest[] = [];
     const pastRequestsList: BookingRequest[] = [];
-    const requestDatesList: Date[] = [];
+    const requestDatesList: (string | null)[] = [];
     const now = new Date().valueOf();
     if (data.requests) {
       data.requests.map((request) => {
-        let newDate = request.start_date;
-        newDate = newDate.split('T')[0];
-        newDate = new Date(newDate);
-        const formattedDate = newDate.toLocaleDateString('en-US');
+        let requestDate = request.start_date.split('T')[0];
+        requestDate = new Date(requestDate);
+        const formattedDate = requestDate.toLocaleDateString('en-US');
         requestDatesList.push(formattedDate);
-        if (newDate > now) {
+        if (requestDate > now) {
           currentRequestsList.push(request);
         } else {
           pastRequestsList.push(request);
@@ -101,7 +99,7 @@ export default function ManageBookings(): JSX.Element {
   }, []);
 
   useEffect(() => {
-    updateNextBookingDisplay();
+    updateBookingDisplay(nextBookingRequest, 'next');
     updateBookingDisplay(currentBookingRequests, 'current');
     updateBookingDisplay(pastBookingRequests, 'past');
   }, [nextBookingRequest, currentBookingRequests, pastBookingRequests]);
@@ -155,14 +153,26 @@ export default function ManageBookings(): JSX.Element {
               autoOk
               orientation="landscape"
               variant="static"
-              openTo="date"
-              value={selectedDate}
+              value={null}
               onChange={(newDate) => setSelectedDate(newDate)}
               disableToolbar
+              disabled
+              readOnly
               renderDay={(date, selectedDate, isInCurrentMonth, dayComponent) => {
-                const dateString: any = date && date.toLocaleDateString('en-US');
-                const isSelected = date && isInCurrentMonth && requestDates && requestDates.includes(dateString);
-                return <Badge badgeContent={isSelected ? '🐾' : undefined}>{dayComponent}</Badge>;
+                const dateString: string | undefined | null = date && date.toLocaleDateString('en-US');
+                const isSelected: boolean | undefined | null =
+                  date && isInCurrentMonth && requestDates && requestDates.includes(dateString);
+                return isSelected ? (
+                  <Badge
+                    overlap="circle"
+                    classes={{ anchorOriginTopRightCircle: classes.badgeAnchorTopRight, badge: classes.badge }}
+                    badgeContent={'🐾'}
+                  >
+                    {dayComponent}
+                  </Badge>
+                ) : (
+                  <>{dayComponent}</>
+                );
               }}
             />
           </MuiPickersUtilsProvider>

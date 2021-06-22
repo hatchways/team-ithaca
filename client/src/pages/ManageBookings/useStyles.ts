@@ -76,6 +76,14 @@ const useStyles = makeStyles({
     transform: 'translateX(1px)',
     top: '80%',
   },
+  badge: {
+    backgroundColor: 'white',
+    borderRadius: '50%',
+    border: '.25px solid lightgrey',
+  },
+  badgeAnchorTopRight: {
+    transform: 'translate(60%, -50%)',
+  },
 });
 
 export default useStyles;
