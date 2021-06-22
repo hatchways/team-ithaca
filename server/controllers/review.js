@@ -1,7 +1,6 @@
 const ObjectId = require("mongoose").Types.ObjectId;
 const asyncHandler = require("express-async-handler");
 const Profile = require("../models/Profile");
-const User = require("../models/User");
 const Review = require("../models/Review");
 
 // @route POST /review/:id

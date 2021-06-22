@@ -7,13 +7,11 @@ const reviewSchema = new mongoose.Schema({
   reviewerUserId: {
     type: ObjectId,
     ref: "user",
-    unique: true,
     requried: true
   },
   userId: {
     type: ObjectId,
     ref: "user",
-    unique: true,
     required: true
   },
   rating: {
@@ -26,7 +24,8 @@ const reviewSchema = new mongoose.Schema({
     type: ObjectId,
     ref: "request",
     required: true
-  }
+  },
+  message: String
 },{ timestamps: true });
 
 module.exports = Review = mongoose.model("review", reviewSchema);
