@@ -28,11 +28,11 @@ export default function ManageBookings(): JSX.Element {
       current: setCurrentBookingsDisplay,
       past: setPastBookingsDisplay,
     };
-    // if bookingRequestName is array, map the items
+    // if bookingRequestName is array, map the booking requests (current and past)
     if (bookingRequestName && bookingRequestName.length >= 1) {
       methods[time](
         <>
-          {bookingRequestName.map((booking: any) => {
+          {bookingRequestName.map((booking: BookingRequest) => {
             const profile = booking.user_id.profile;
             return (
               <Grid key={booking._id}>
@@ -48,7 +48,7 @@ export default function ManageBookings(): JSX.Element {
           })}
         </>,
       );
-      // if bookingRequestName is not an array, display the single item
+      // if bookingRequestName is not an array, display the single booking request (next booking request)
     } else if (bookingRequestName) {
       const profile = bookingRequestName.user_id.profile;
       methods[time](
