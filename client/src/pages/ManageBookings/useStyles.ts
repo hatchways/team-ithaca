@@ -63,6 +63,19 @@ const useStyles = makeStyles({
   currentPastBooking: {
     border: '1px solid lightgrey',
   },
+  dayWithDotContainer: {
+    position: 'relative',
+  },
+  dayWithDot: {
+    position: 'absolute',
+    height: 0,
+    width: 0,
+    border: '2px solid',
+    borderRadius: 4,
+    right: '50%',
+    transform: 'translateX(1px)',
+    top: '80%',
+  },
 });
 
 export default useStyles;

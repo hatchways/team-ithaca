@@ -13,8 +13,9 @@ import { Badge } from '@material-ui/core';
 
 export default function ManageBookings(): JSX.Element {
   const classes = useStyles();
-  const [date, setDate] = useState<Date | null>(new Date());
-  const [selectedDays, setSelectedDays] = useState([1, 2, 15]);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  const [selectedDays, setSelectedDays] = useState([1, 2, 3, 4, 5]);
+  const [requestDates, setRequestDates] = useState<Date[]>();
   const [nextBookingRequest, setNextBookingRequest] = useState<BookingRequest>();
   const [pastBookingRequests, setPastBookingRequests] = useState<BookingRequest[]>();
   const [currentBookingRequests, setCurrentBookingRequests] = useState<BookingRequest[]>();
@@ -73,16 +74,22 @@ export default function ManageBookings(): JSX.Element {
     const data = await getBookingRequests();
     const currentRequestsList: BookingRequest[] = [];
     const pastRequestsList: BookingRequest[] = [];
+    const requestDatesList: Date[] = [];
     const now = new Date().valueOf();
     if (data.requests) {
       data.requests.map((request) => {
-        const startDate = Date.parse(request.start_date);
-        if (startDate > now) {
+        let newDate = request.start_date;
+        newDate = newDate.split('T')[0];
+        newDate = new Date(newDate);
+        const formattedDate = newDate.toLocaleDateString('en-US');
+        requestDatesList.push(formattedDate);
+        if (newDate > now) {
           currentRequestsList.push(request);
         } else {
           pastRequestsList.push(request);
         }
       });
+      setRequestDates(requestDatesList);
       setNextBookingRequest(currentRequestsList[0]);
       setCurrentBookingRequests(currentRequestsList.slice(1));
       setPastBookingRequests(pastRequestsList);
@@ -124,6 +131,10 @@ export default function ManageBookings(): JSX.Element {
             ) : (
               <Typography className={classes.noBookingDisplay}>No current bookings</Typography>
             )}
+          </CardContent>
+        </Card>
+        <Card raised className={classes.bookingCard}>
+          <CardContent>
             <Grid className={classes.cardHeader}>
               <Typography className={classes.bookingTitle}>Past Bookings:</Typography>
             </Grid>
@@ -145,19 +156,14 @@ export default function ManageBookings(): JSX.Element {
               orientation="landscape"
               variant="static"
               openTo="date"
-              value={date}
-              onChange={(newDate) => setDate(newDate)}
+              value={selectedDate}
+              onChange={(newDate) => setSelectedDate(newDate)}
               disableToolbar
-              //   Below can be used to render badges on the calendar. https://material-ui-pickers.dev/demo/datepicker
-              //   renderDay={(day, date, isInCurrentMonth, dayComponent) => {
-              //     if (date) {
-              //       const isSelected = isInCurrentMonth && selectedDays.includes(date.getDate());
-              //       // You can also use our internal <Day /> component
-              //       return <Badge badgeContent={isSelected ? '🌚' : undefined}>{dayComponent}</Badge>;
-              //     } else {
-              //       return <></>;
-              //     }
-              //   }}
+              renderDay={(date, selectedDate, isInCurrentMonth, dayComponent) => {
+                const dateString: any = date && date.toLocaleDateString('en-US');
+                const isSelected = date && isInCurrentMonth && requestDates && requestDates.includes(dateString);
+                return <Badge badgeContent={isSelected ? '🐾' : undefined}>{dayComponent}</Badge>;
+              }}
             />
           </MuiPickersUtilsProvider>
         </Card>
