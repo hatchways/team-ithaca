@@ -25,13 +25,15 @@ const Booking: React.FC<BookingProps> = ({ outlined, accepted, large, date, name
     <Card variant={outlined ? 'outlined' : undefined} className={classes.booking}>
       <CardContent>
         <Grid className={classes.bookingHeader}>
-          <Typography variant={large ? 'h4' : 'h5'}>{dateString}</Typography>
+          <Typography className={classes.date} variant={large ? 'h4' : 'h5'}>
+            {dateString}
+          </Typography>
           <SettingsIcon className={classes.settingsIcon} />
         </Grid>
         <Grid className={classes.bookingProfileGrid}>
           <Grid className={classes.bookingUserInfoGrid}>
             <Avatar className={classes.bookingAvatar} src={avatar} alt="" />
-            <Typography variant={large ? 'h5' : 'h6'} component="h2">
+            <Typography className={classes.name} variant={large ? 'h5' : 'h6'} component="h2">
               {name}
             </Typography>
           </Grid>

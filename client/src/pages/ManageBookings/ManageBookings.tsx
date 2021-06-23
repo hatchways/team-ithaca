@@ -50,7 +50,7 @@ export default function ManageBookings(): JSX.Element {
       );
       // if bookingRequestName is not an array, display the single booking request (next booking request)
     } else if (bookingRequestName) {
-      const profile = bookingRequestName.user_id.profile;
+      const profile = bookingRequestName.user_id && bookingRequestName.user_id.profile;
       methods[time](
         <>
           <Grid key={bookingRequestName._id}>
@@ -74,14 +74,14 @@ export default function ManageBookings(): JSX.Element {
     const currentRequestsList: BookingRequest[] = [];
     const pastRequestsList: BookingRequest[] = [];
     const requestDatesList: (string | null)[] = [];
-    const now = new Date().valueOf();
+    const now = new Date();
+    const nowString = now.toLocaleDateString('en-US');
     if (data.requests) {
       data.requests.map((request) => {
-        let requestDate = request.start_date.split('T')[0];
-        requestDate = new Date(requestDate);
+        const requestDate = new Date(request.start_date);
         const formattedDate = requestDate.toLocaleDateString('en-US');
         requestDatesList.push(formattedDate);
-        if (requestDate > now) {
+        if (nowString === formattedDate || requestDate > now) {
           currentRequestsList.push(request);
         } else {
           pastRequestsList.push(request);
