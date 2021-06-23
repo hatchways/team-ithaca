@@ -11,23 +11,30 @@ interface BookingProps {
   outlined?: boolean;
   accepted?: boolean;
   large?: boolean;
+  date?: Date;
+  name?: string;
+  avatar?: string;
 }
 
-const Booking: React.FC<BookingProps> = ({ outlined, accepted, large }) => {
+const Booking: React.FC<BookingProps> = ({ outlined, accepted, large, date, name, avatar }) => {
   const classes = useStyles();
+
+  const dateString = date && date.toString().split('T')[0];
 
   return (
     <Card variant={outlined ? 'outlined' : undefined} className={classes.booking}>
       <CardContent>
         <Grid className={classes.bookingHeader}>
-          <Typography variant={large ? 'h4' : 'h5'}>16 June 2021, 10-12 AM</Typography>
+          <Typography className={classes.date} variant={large ? 'h4' : 'h5'}>
+            {dateString}
+          </Typography>
           <SettingsIcon className={classes.settingsIcon} />
         </Grid>
         <Grid className={classes.bookingProfileGrid}>
           <Grid className={classes.bookingUserInfoGrid}>
-            <Avatar className={classes.bookingAvatar} />
-            <Typography variant={large ? 'h5' : 'h6'} component="h2">
-              First Last Name
+            <Avatar className={classes.bookingAvatar} src={avatar} alt="" />
+            <Typography className={classes.name} variant={large ? 'h5' : 'h6'} component="h2">
+              {name}
             </Typography>
           </Grid>
           <Typography className={classes.bookingAcceptedDeclined}>
