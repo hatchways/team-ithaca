@@ -47,6 +47,7 @@ exports.createReview = asyncHandler(async (req, res, next) => {
 exports.getAvgUserReview = asyncHandler(async (req, res, next) => {
   Review.aggregate(
     [
+      { $match: { userId: req.user.id } },
       { $group: { _id: "$userId", avgRating: { $avg: "$rating" } } }
     ]
   ).exec((error, reviews) => {
@@ -57,10 +58,9 @@ exports.getAvgUserReview = asyncHandler(async (req, res, next) => {
       })
     }
 
-    return res.status(200).json({
-      success: "Retrieved successfully",
-      reviews
-    })
+    req.reviews = reviews;
+    next();
+    
   })
 })
 
