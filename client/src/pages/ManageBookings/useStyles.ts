@@ -95,6 +95,36 @@ const useStyles = makeStyles((theme) => {
         fontSize: '.9rem',
       },
     },
+    popoverCard: {
+      width: '50vw',
+      padding: '1.5rem',
+    },
+    popoverAcceptContainer: {
+      display: 'flex',
+      alignItems: 'center',
+    },
+    popoverDateContainer: {
+      display: 'flex',
+      justifyContent: 'center',
+    },
+    popoverDateTime: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+    },
+    popoverTextField: {
+      margin: 10,
+    },
+    popoverDateText: {
+      fontSize: 15,
+    },
+    popoverDate: {
+      alignSelf: 'center',
+      [theme.breakpoints.down('xs')]: {
+        fontSize: '1rem',
+      },
+      margin: '.25rem',
+    },
   };
 });
 

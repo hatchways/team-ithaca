@@ -4,6 +4,9 @@ import CardContent from '@material-ui/core/CardContent';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import SettingsIcon from '@material-ui/icons/Settings';
+import { IconButton, Popper } from '@material-ui/core';
+import EditBookingPopover from './EditBookingPopover';
+import { useState } from 'react';
 
 import useStyles from './useStyles';
 
@@ -17,9 +20,22 @@ interface BookingProps {
 }
 
 const Booking: React.FC<BookingProps> = ({ outlined, accepted, large, date, name, avatar }) => {
+  const [popperAnchor, setPopperAnchor] = useState<null | HTMLElement>(null);
+
   const classes = useStyles();
 
   const dateString = date && date.toString().split('T')[0];
+
+  const [popoverOpen, setPopoverOpen] = useState<boolean>(false);
+
+  const openClosePopover = (target: HTMLButtonElement) => {
+    setPopoverOpen((prevState) => !prevState);
+    if (target === popperAnchor) {
+      setPopperAnchor(null);
+    } else {
+      setPopperAnchor(target);
+    }
+  };
 
   return (
     <Card variant={outlined ? 'outlined' : undefined} className={classes.booking}>
@@ -28,7 +44,13 @@ const Booking: React.FC<BookingProps> = ({ outlined, accepted, large, date, name
           <Typography className={classes.date} variant={large ? 'h4' : 'h5'}>
             {dateString}
           </Typography>
-          <SettingsIcon className={classes.settingsIcon} />
+          <IconButton
+            onClick={(e) => {
+              openClosePopover(e.currentTarget);
+            }}
+          >
+            <SettingsIcon className={classes.settingsIcon} />
+          </IconButton>
         </Grid>
         <Grid className={classes.bookingProfileGrid}>
           <Grid className={classes.bookingUserInfoGrid}>
@@ -42,6 +64,16 @@ const Booking: React.FC<BookingProps> = ({ outlined, accepted, large, date, name
           </Typography>
         </Grid>
       </CardContent>
+      <EditBookingPopover
+        open={popoverOpen}
+        handleOpen={(e: any) => {
+          openClosePopover(e.currentTarget);
+        }}
+        dateString={dateString}
+        name={name}
+        avatar={avatar}
+        anchor={popperAnchor}
+      />
     </Card>
   );
 };

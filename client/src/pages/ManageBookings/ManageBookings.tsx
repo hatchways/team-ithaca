@@ -10,6 +10,7 @@ import { Typography } from '@material-ui/core';
 import { BookingRequest } from '../../interface/BookingRequest';
 import getBookingRequests from '../../helpers/APICalls/bookingRequests/getBookingRequests';
 import { Badge } from '@material-ui/core';
+import EditBookingPopover from './EditBookingPopover';
 
 export default function ManageBookings(): JSX.Element {
   const classes = useStyles();
