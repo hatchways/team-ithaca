@@ -1,33 +1,38 @@
+import { lazy, Suspense } from 'react';
 import { Route, Redirect, Switch } from 'react-router-dom';
 
-import Login from './pages/Login/Login';
-import Signup from './pages/SignUp/SignUp';
-import ProfileListings from './pages/ProfileListings/ProfileListings';
-import ProfileDetails from './pages/ProfileDetails/ProfileDetails';
-import Settings from './pages/Settings/Settings';
-import Messages from './pages/Messages/index';
+import Spinner from './components/Spinner/Spinner';
 import ProtectedRoute from './ProtectedRoute';
-import Main from './pages/Main/Main';
 import AuthNavbar from './components/AuthNavbar/Navbar';
 import { useAuth } from './context/useAuthContext';
+
+const Main = lazy(() => import('./pages/Main/Main'));
+const Login = lazy(() => import('./pages/Login/Login'));
+const Signup = lazy(() => import('./pages/SignUp/SignUp'));
+const ProfileListings = lazy(() => import('./pages/ProfileListings/ProfileListings'));
+const Settings = lazy(() => import('./pages/Settings/Settings'));
+const Messages = lazy(() => import('./pages/Messages/index'));
+const ProfileDetails = lazy(() => import('./pages/ProfileDetails/ProfileDetails'));
 
 const Routes = (): JSX.Element => {
   const { loggedInUser } = useAuth();
   return (
     <>
       {loggedInUser && <AuthNavbar />}
-      <Switch>
-        <Route exact path="/" component={Main} />
-        <Route exact path="/login" component={Login} />
-        <Route exact path="/signup" component={Signup} />
-        <ProtectedRoute exact path="/dashboard" component={ProfileListings} />
-        <ProtectedRoute exact path="/settings" component={Settings} />
-        <ProtectedRoute exact path="/messages" component={Messages} />
-        <ProtectedRoute path="/dashboard/:userId" component={ProfileDetails} />
-        <Route path="*">
-          <Redirect to="/login" />
-        </Route>
-      </Switch>
+      <Suspense fallback={<Spinner />}>
+        <Switch>
+          <Route exact path="/" component={Main} />
+          <Route exact path="/login" component={Login} />
+          <Route exact path="/signup" component={Signup} />
+          <ProtectedRoute exact path="/dashboard" component={ProfileListings} />
+          <ProtectedRoute exact path="/settings" component={Settings} />
+          <ProtectedRoute exact path="/messages" component={Messages} />
+          <ProtectedRoute path="/dashboard/:userId" component={ProfileDetails} />
+          <Route path="*">
+            <Redirect to="/login" />
+          </Route>
+        </Switch>
+      </Suspense>
     </>
   );
 };
