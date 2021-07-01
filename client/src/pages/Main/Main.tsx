@@ -64,6 +64,12 @@ export default function Main({ location, history }: RouteComponentProps): JSX.El
                   dog deserves
                 </Box>
               </Typography>
+              <Typography variant="h2" component="h1" className={classes.mainText}>
+                This branch is
+                <Box display="block" component="span">
+                  App Perfoemance
+                </Box>
+              </Typography>
               <form onSubmit={handleSubmit}>
                 <InputLabel htmlFor="search" className={classes.searchText}>
                   WHERE
