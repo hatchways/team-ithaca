@@ -7,6 +7,7 @@ const connectDB = require("./db");
 const { join } = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
+const cors = require("cors");
 
 const authRouter = require("./routes/auth");
 const userRouter = require("./routes/user");
@@ -24,6 +25,10 @@ const { appSocket } = require("./socket");
 
 connectDB();
 const app = express();
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+}));
 const server = http.createServer(app);
 
 // initialized socket

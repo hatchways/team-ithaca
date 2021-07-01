@@ -1,5 +1,6 @@
 import { FetchOptions } from '../../interface/FetchOptions';
 import { NotificationApiData, Notification } from '../../interface/Notification';
+import API from '../../API';
 
 export interface ICreateNotification {
   title: string;
@@ -23,7 +24,7 @@ export const createNotification = async (
     body: JSON.stringify({ ...data }),
     credentials: 'include',
   };
-  return await fetch(`/notification/create`, fetchOptions)
+  return await fetch(`${API}/notification/create`, fetchOptions)
     .then((res) => res.json())
     .catch(() => ({
       error: { message: 'Unable to connect to server. Please try again' },
@@ -36,7 +37,7 @@ export const getUnreadNotifications = async (): Promise<NotificationApiData> => 
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
   };
-  return await fetch(`/notification/unread`, fetchOptions)
+  return await fetch(`${API}/notification/unread`, fetchOptions)
     .then((res) => res.json())
     .catch(() => ({
       error: { message: 'Unable to connect to server. Please try again' },
@@ -50,7 +51,7 @@ export const updateReadStatus = async (notifications: Notification[]): Promise<N
     body: JSON.stringify({ notifications }),
     credentials: 'include',
   };
-  return await fetch(`/notification/updatereadstatus`, fetchOptions)
+  return await fetch(`${API}/notification/updatereadstatus`, fetchOptions)
     .then((res) => res.json())
     .catch(() => ({
       error: { message: 'Unable to connect to server. Please try again' },

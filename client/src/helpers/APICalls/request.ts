@@ -1,5 +1,6 @@
 import { FetchOptions } from '../../interface/FetchOptions';
 import { RequestApiData, Request } from '../../interface/Request';
+import API from '../../API';
 
 export const createRequest = async (data: Request): Promise<RequestApiData> => {
   const fetchOptions: FetchOptions = {
@@ -8,7 +9,7 @@ export const createRequest = async (data: Request): Promise<RequestApiData> => {
     body: JSON.stringify({ ...data }),
     credentials: 'include',
   };
-  return await fetch(`/request/create`, fetchOptions)
+  return await fetch(`${API}/request/create`, fetchOptions)
     .then((res) => res.json())
     .catch(() => ({
       error: { message: 'Unable to connect to server. Please try again' },
@@ -26,7 +27,7 @@ export const updateRequest = async (
     body: JSON.stringify({ accepted, declined }),
     credentials: 'include',
   };
-  return await fetch(`/request/update/${requestId}`, fetchOptions)
+  return await fetch(`${API}/request/update/${requestId}`, fetchOptions)
     .then((res) => res.json())
     .catch((error) => {
       console.log({ error });

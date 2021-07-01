@@ -1,5 +1,6 @@
 import { FetchOptions } from '../../context/interface/FetchOptions';
 import { EditProfileFields } from '../../context/useUserContext';
+import API from '../../API';
 
 interface AuthFieldsResult {
   error?: string;
@@ -21,7 +22,7 @@ export const updateIsDogSitter = async (): Promise<{
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
   };
-  return await fetch(`/auth/update/isDogSitter`, fetchOptions)
+  return await fetch(`${API}/auth/update/isDogSitter`, fetchOptions)
     .then((res) => res.json())
     .catch(() => ({
       error: 'Unable to connect to server. Please try again',
@@ -35,7 +36,7 @@ export const updateAuthFields = async (firstName: string, lastName: string): Pro
     body: JSON.stringify({ firstName, lastName }),
     credentials: 'include',
   };
-  return await fetch(`/auth/update`, fetchOptions)
+  return await fetch(`${API}/auth/update`, fetchOptions)
     .then((res) => res.json())
     .catch(() => ({
       error: { message: 'Unable to connect to server. Please try again' },
@@ -49,7 +50,7 @@ export const createOrUpdateProfileFields = async (fields: EditProfileFields): Pr
     body: JSON.stringify({ ...fields }),
     credentials: 'include',
   };
-  return await fetch(`/profile/createorupdate`, fetchOptions)
+  return await fetch(`${API}/profile/createorupdate`, fetchOptions)
     .then((res) => res.json())
     .catch(() => ({
       error: { message: 'Unable to connect to server. Please try again' },
@@ -62,7 +63,7 @@ export const getOneProfile = async (): Promise<ProfileFieldsResult> => {
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
   };
-  return await fetch(`/profile/one`, fetchOptions)
+  return await fetch(`${API}/profile/one`, fetchOptions)
     .then((res) => res.json())
     .catch(() => ({
       error: { message: 'Unable to connect to server. Please try again' },

@@ -1,5 +1,6 @@
 import { S3UploadAPIData } from '../../interface/S3Upload';
 import { FetchOptions } from '../../interface/FetchOptions';
+import API from '../../API';
 
 const uploadImagesAPI = async (data: FormData): Promise<S3UploadAPIData> => {
   const fetchOptions: FetchOptions = {
@@ -10,7 +11,7 @@ const uploadImagesAPI = async (data: FormData): Promise<S3UploadAPIData> => {
     body: data,
     credentials: 'include',
   };
-  return await fetch(`/upload/uploadimage`, fetchOptions)
+  return await fetch(`${API}/upload/uploadimage`, fetchOptions)
     .then((res) => res.json())
     .catch(() => ({
       error: 'Unable to connect to server. Please try again',
